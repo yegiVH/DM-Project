@@ -15,10 +15,10 @@ const azureCredentials = {
 };
 
 const azureLanguageCredentials = {
-  endpoint: "https://lab-gusvahaye.cognitiveservices.azure.com/language/:analyze-conversations?api-version=2024-11-15-preview" /** your Azure CLU prediction URL */,
-  key: NLU_KEY /** reference to your Azure CLU key */,
-  deploymentName: "appointment" /** your Azure CLU deployment */,
-  projectName: "appointment" /** your Azure CLU project name */,
+  endpoint: "https://lab-gusvahaye.cognitiveservices.azure.com/language/:analyze-conversations?api-version=2024-11-15-preview",
+  key: NLU_KEY ,
+  deploymentName: "wrodguess",
+  projectName: "wordguess",
 };
 
 const settings: Settings = {
@@ -32,7 +32,20 @@ const settings: Settings = {
 };
 
 /* ---------------- Helper functions ---------------- */
+function extractDifficulty(nlu?: NLUObject | null): "easy" | "medium" | "hard" | null {
+  if (!nlu) return null;
 
+  const ent = nlu.entities.find(e => e.category === "difficulty");
+  if (!ent) return null;
+
+  const value = ent.text.trim().toLowerCase();
+
+  if (value === "easy" || value === "medium" || value === "hard") {
+    return value;
+  }
+
+  return null;
+}
 
 
 /* ---------------- Dialogue Manager ---------------- */
@@ -49,6 +62,11 @@ const dmMachine = setup({
         type: "SPEAK",
         value: { utterance: params.utterance },
       });
+
+      const systemText = document.getElementById("system-text");
+      if (systemText) {
+        systemText.textContent = params.utterance;
+      }
     },
 
     // for listening
@@ -70,10 +88,17 @@ const dmMachine = setup({
     spstRef: spawn(speechstate, { input: settings }),
     lastResult: null,
     interpretation: null,
-
+    // game state
+    difficulty: null,     // "easy" | "medium" | "hard"
+    currentWord: null,    // e.g. "banana"
+    clues: [],            //["It's a fruit", "It's yellow", ...]
+    clueIndex: 0,         // which clue you're on
+    roundsCompleted: 0,   // how many words solved
+    maxRounds: 3          // total rounds in the game
   }),
 
   states: {
+
     /* -------- PREPARE -------- */
     Prepare: {
       entry: ({ context }) =>
@@ -83,31 +108,158 @@ const dmMachine = setup({
 
     /* -------- START -------- */
     WaitToStart: {
-      entry: assign({
-
-      }),
+      entry: [
+        assign({
+          difficulty: null,
+          currentWord: null,
+          clues: [],
+          clueIndex: 0,
+          roundsCompleted: 0
+        }),
+        { type: "spst.speak", params: { utterance: "Click to start the game." } }
+      ],
       on: {
-        CLICK: "A",
+        CLICK: "intro",
       },
     },
 
-    /* -------- A -------- */
-    A: {
+
+    /* -------- INTRO -------- */
+    intro: {
       entry: {
         type: "spst.speak",
-        params: { utterance: "Hi" }
+        params: {
+          utterance: "Welcome to the Word Guessing Game!"
+        }
       },
-      on: { SPEAK_COMPLETE: "Done" }
+      on: { SPEAK_COMPLETE: "chooseDifficulty" }
     },
 
-    /* -------- DONE -------- */
-    Done: {
+
+    /* -------- CHOOSE DIFFICULTY -------- */
+    chooseDifficulty: {
+      initial: "AskDifficulty",
+
+      states: {
+        AskDifficulty: {
+          entry: {
+            type: "spst.speak",
+            params: {
+              utterance: "Choose a difficulty: easy, medium, or hard."
+            }
+          },
+          on: {
+            SPEAK_COMPLETE: "ListenDifficulty"
+          }
+        },
+
+        ListenDifficulty: {
+          entry: { type: "spst.listen" },
+
+          on: {
+            RECOGNISED: {
+              guard: ({ event }) =>
+                event.type === "RECOGNISED" &&
+                event.nluValue?.topIntent === "choose_difficulty",
+
+              actions: assign(({ event }) => ({
+                difficulty: extractDifficulty(event.nluValue)
+              })),
+
+              target: "#DM.round"
+            },
+
+            LISTEN_COMPLETE: [
+              {
+                guard: ({ context }) => context.difficulty !== null,
+                target: "#DM.round"
+              },
+              {
+                target: "AskDifficulty"
+              }
+            ]
+          }
+        }
+      }
+    },
+
+    /* -------- ROUND START -------- */
+    round: {
+
+    },
+
+
+    /* -------- GIVE CLUE -------- */
+    giveClue: {
+
+    },
+
+
+    /* -------- WAITE FOR GUESS -------- */
+    waitForGuess: {
+
+    },
+
+
+    /* -------- CHECKGUESS -------- */
+    checkGuess: {
+
+    },
+
+
+    /* -------- CORRECT -------- */
+    correct: {
+
+    },
+
+
+    /* -------- INCORRECT -------- */
+    incorrect: {
+
+    },
+
+
+    /* -------- HINT -------- */
+    hint: {
+
+    },
+
+
+    /* -------- REPEAT CLUE -------- */
+    repeatClue: {
+
+    },
+
+
+    /* -------- SKIP WORD -------- */
+    skipWord: {
+
+    },
+
+
+    /* -------- HELP -------- */
+    help: {
+
+    },
+
+    /* -------- VICTORY -------- */
+    Victory: {
       entry: {
         type: "spst.speak",
-        params: { utterance: "done" },
+        params: { utterance: "Victory" },
       },
       on: { CLICK: "WaitToStart" },
     },
+
+    /* -------- GAME OVER -------- */
+    GameOver: {
+      entry: {
+        type: "spst.speak",
+        params: { utterance: "Game Over" },
+      },
+      on: { CLICK: "WaitToStart" },
+    },
+
   },
 });
 
@@ -116,6 +268,7 @@ const dmActor = createActor(dmMachine, {
   inspect: inspector.inspect,
 }).start();
 
+/* Global DM logging */
 dmActor.subscribe((state) => {
   console.group("State update");
   console.log("State value:", state.value);
@@ -125,15 +278,41 @@ dmActor.subscribe((state) => {
 
 /* ---------------- Button ---------------- */
 export function setupButton(element: HTMLButtonElement) {
+  const systemText = document.getElementById("system-text")!;
+  const listeningIndicator = document.getElementById("listening-indicator")!;
+
+  /* Button click → send CLICK */
   element.addEventListener("click", () => {
     dmActor.send({ type: "CLICK" });
   });
-  dmActor.subscribe((snapshot) => {
-    const meta: { view?: string } = Object.values(
-      snapshot.context.spstRef.getSnapshot().getMeta(),
-    )[0] || {
-      view: undefined,
-    };
-    element.innerHTML = `${meta.view}`;
+
+  /* Update button label based on Speechstate meta */
+  const unsubscribeDM = dmActor.subscribe((snapshot) => {
+    const speechSnapshot = snapshot.context.spstRef?.getSnapshot();
+    if (!speechSnapshot) return;
+
+    const meta: { view?: string } =
+      Object.values(speechSnapshot.getMeta())[0] || {};
+
+    element.innerHTML = meta.view || "Start Game";
   });
+
+  /* Subscribe to Speechstate for listening indicator */
+  const speechActor = dmActor.getSnapshot().context.spstRef;
+  if (speechActor) {
+    speechActor.subscribe((speechSnapshot) => {
+      const isListening =
+        JSON.stringify(speechSnapshot.value).includes("Listening");
+
+      // Update indicator
+      listeningIndicator.classList.toggle("on", isListening);
+      listeningIndicator.classList.toggle("off", !isListening);
+      listeningIndicator.textContent = isListening
+        ? "🎤 Listening..."
+        : "🎤 Not listening";
+
+      // Update button
+      element.classList.toggle("on", isListening);
+    });
+  }
 }
