@@ -16,8 +16,8 @@ const azureCredentials = {
 
 const azureLanguageCredentials = {
   endpoint: "https://lab-gusvahaye.cognitiveservices.azure.com/language/:analyze-conversations?api-version=2024-11-15-preview",
-  key: NLU_KEY ,
-  deploymentName: "wrodguess",
+  key: NLU_KEY,
+  deploymentName: "wordguess",
   projectName: "wordguess",
 };
 
@@ -32,18 +32,27 @@ const settings: Settings = {
 };
 
 /* ---------------- Helper functions ---------------- */
-function extractDifficulty(nlu?: NLUObject | null): "easy" | "medium" | "hard" | null {
+function extractDifficulty(nlu: NLUObject | null): "easy" | "medium" | "hard" | null {
   if (!nlu) return null;
-
-  const ent = nlu.entities.find(e => e.category === "difficulty");
-  if (!ent) return null;
-
-  const value = ent.text.trim().toLowerCase();
-
-  if (value === "easy" || value === "medium" || value === "hard") {
-    return value;
+  for (const entity of nlu.entities) {
+    if (entity.category === "difficulty") {
+      const value = entity.text.trim().toLowerCase();
+      if (value === "easy" || value === "medium" || value === "hard") {
+        return value;
+      }
+    }
   }
+  return null;
+}
 
+function getWord(nlu: NLUObject | null): string | null {
+  if (nlu) {
+    for (const entity of nlu.entities) {
+      if (entity.category === "word_guess") {
+        return entity.text;
+      }
+    }
+  }
   return null;
 }
 
@@ -94,7 +103,8 @@ const dmMachine = setup({
     clues: [],            //["It's a fruit", "It's yellow", ...]
     clueIndex: 0,         // which clue you're on
     roundsCompleted: 0,   // how many words solved
-    maxRounds: 3          // total rounds in the game
+    maxRounds: 3,          // total rounds in the game
+    guessedWord: null,
   }),
 
   states: {
@@ -114,7 +124,8 @@ const dmMachine = setup({
           currentWord: null,
           clues: [],
           clueIndex: 0,
-          roundsCompleted: 0
+          roundsCompleted: 0,
+          guessedWord: null,
         }),
         { type: "spst.speak", params: { utterance: "Click to start the game." } }
       ],
@@ -155,55 +166,131 @@ const dmMachine = setup({
 
         ListenDifficulty: {
           entry: { type: "spst.listen" },
-
           on: {
             RECOGNISED: {
-              guard: ({ event }) =>
-                event.type === "RECOGNISED" &&
-                event.nluValue?.topIntent === "choose_difficulty",
-
               actions: assign(({ event }) => ({
+                lastResult: event.value,
+                interpretation: event.value,
                 difficulty: extractDifficulty(event.nluValue)
-              })),
-
-              target: "#DM.round"
+              }))
             },
-
             LISTEN_COMPLETE: [
               {
-                guard: ({ context }) => context.difficulty !== null,
-                target: "#DM.round"
+                target: "#DM.round",
+                guard: ({ context }) => !!context.difficulty,
               },
               {
                 target: "AskDifficulty"
               }
-            ]
-          }
-        }
+            ],
+          },
+        },
       }
     },
 
+
     /* -------- ROUND START -------- */
     round: {
+      entry: assign(({ context }) => {
+        let word = "banana";
+        let clues: string[] = [];
 
+        // if user chooses easy
+        if (context.difficulty === "easy") {
+          word = "banana";
+          clues = [
+            "It is a fruit.",
+            "It is yellow.",
+            "Monkeys like it."
+          ];
+        }
+
+        // if user chooses medium
+        if (context.difficulty === "medium") {
+          word = "elephant";
+          clues = [
+            "It is an animal.",
+            "It is very big.",
+            "It has a trunk."
+          ];
+        }
+
+        // if user chooses hard
+        if (context.difficulty === "hard") {
+          word = "microscope";
+          clues = [
+            "It is a tool.",
+            "It is used in science.",
+            "It makes small things look bigger."
+          ];
+        }
+
+        return {
+          currentWord: word,
+          clues,
+          clueIndex: 0
+        };
+      }),
+      always: "giveClue"
     },
-
 
     /* -------- GIVE CLUE -------- */
     giveClue: {
-
+      entry: {
+        type: "spst.speak",
+        params: ({ context }) => ({
+          utterance: context.clues[context.clueIndex]
+        })
+      },
+      on: {
+        SPEAK_COMPLETE: "waitForGuess"
+      }
     },
 
 
     /* -------- WAITE FOR GUESS -------- */
     waitForGuess: {
-
+      entry: { type: "spst.listen" },
+      on: {
+        RECOGNISED: {
+          actions: assign(({ event }) => ({
+            interpretation: event.nluValue,
+            guessedWord: getWord(event.nluValue)
+          }))
+        },
+        LISTEN_COMPLETE: [
+          {
+            guard: ({ context }) =>
+              context.interpretation?.topIntent === "guess_word",
+            target: "checkGuess"
+          },
+          {
+            guard: ({ context }) =>
+              context.interpretation?.topIntent === "ask_hint",
+            target: "hint"
+          },
+          {
+            guard: ({ context }) =>
+              context.interpretation?.topIntent === "give_up",
+            target: "GameOver"
+          },
+          {
+            target: "giveClue"
+          }
+        ]
+      }
     },
-
 
     /* -------- CHECKGUESS -------- */
     checkGuess: {
-
+      always: [
+        {
+          guard: ({ context }) =>
+            context.guessedWord === context.currentWord,
+          target: "correct"
+        },
+        { target: "incorrect" }
+      ]
     },
 
 
@@ -240,6 +327,18 @@ const dmMachine = setup({
     /* -------- HELP -------- */
     help: {
 
+    },
+
+    Fallback: {
+      entry: {
+        type: "spst.speak",
+        params: {
+          utterance: "I'm having trouble understanding. Let's start over."
+        }
+      },
+      on: {
+        SPEAK_COMPLETE: "WaitToStart"
+      }
     },
 
     /* -------- VICTORY -------- */

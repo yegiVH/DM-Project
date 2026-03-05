@@ -8,12 +8,13 @@ export interface DMContext {
   interpretation: NLUObject | null;
 
   // game-specific context
-  difficulty: "easy" | "medium" | "hard" | null;
-  currentWord: string | null;
-  clues: string[];
-  clueIndex: number;
-  roundsCompleted: number;
-  maxRounds: number;
+  difficulty?: "easy" | "medium" | "hard" | null;
+  currentWord?: string | null;
+  clues?: string[];
+  clueIndex?: number;
+  roundsCompleted?: number;
+  maxRounds?: number;
+  guessedWord?: string | null;
 }
 
 export type DMEvents = 
@@ -24,13 +25,7 @@ export type DMEvents =
   | { type: "RECOGNISED"; value: any; nluValue?: NLUObject }
   | { type: "LISTEN_COMPLETE" }
   | { type: "SPEAK_COMPLETE" }
-
-  // game-specific events
-  | { type: "GUESS"; word: string }
-  | { type: "ASK_HINT" }
-  | { type: "REPEAT_CLUE" }
-  | { type: "SET_DIFFICULTY"; value: "easy" | "medium" | "hard" }
-  | { type: "GIVE_UP" };
+  | { type: "ASR_NOINPUT" };
 
 
 export interface Entity {
