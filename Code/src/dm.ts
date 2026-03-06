@@ -170,7 +170,7 @@ const dmMachine = setup({
             RECOGNISED: {
               actions: assign(({ event }) => ({
                 lastResult: event.value,
-                interpretation: event.value,
+                interpretation: event.nluValue,
                 difficulty: extractDifficulty(event.nluValue)
               }))
             },
@@ -296,44 +296,128 @@ const dmMachine = setup({
 
     /* -------- CORRECT -------- */
     correct: {
+      entry: [
+        {
+          type: "spst.speak",
+          params: ({ context }) => ({
+            utterance: `Correct! The word was ${context.currentWord}`
+          })
+        },
 
+        assign({
+          roundsCompleted: ({ context }) => context.roundsCompleted + 1
+        })
+      ],
+
+      on: {
+        SPEAK_COMPLETE: "checkVictory"
+      }
     },
 
 
+    /* -------- CHECK VICTORY -------- */
+    checkVictory: {
+      always: [
+        {
+          guard: ({ context }) =>
+            context.roundsCompleted >= context.maxRounds,
+          target: "Victory"
+        },
+        { target: "round" }
+      ]
+    },
+
     /* -------- INCORRECT -------- */
     incorrect: {
+      entry: {
+        type: "spst.speak",
+        params: {
+          utterance: "That is not correct. Try again or ask for a hint."
+        }
+      },
 
+      on: {
+        SPEAK_COMPLETE: "waitForGuess"
+      }
     },
 
 
     /* -------- HINT -------- */
     hint: {
+      entry: assign(({ context }) => {
+        const nextIndex = context.clueIndex + 1;
 
+        if (nextIndex >= context.clues.length) {
+          return {};
+        }
+
+        return { clueIndex: nextIndex };
+      }),
+
+      always: [
+        {
+          guard: ({ context }) => context.clueIndex >= context.clues.length - 1,
+          target: "repeatClue"
+        },
+        {
+          target: "giveClue"
+        }
+      ]
     },
 
 
     /* -------- REPEAT CLUE -------- */
     repeatClue: {
+      entry: {
+        type: "spst.speak",
+        params: ({ context }) => ({
+          utterance: context.clues[context.clueIndex]
+        })
+      },
 
+      on: {
+        SPEAK_COMPLETE: "waitForGuess"
+      }
     },
 
 
     /* -------- SKIP WORD -------- */
     skipWord: {
+      entry: {
+        type: "spst.speak",
+        params: ({ context }) => ({
+          utterance: `Skipping this word. The answer was ${context.currentWord}`
+        })
+      },
 
+      on: {
+        SPEAK_COMPLETE: "round"
+      }
     },
 
 
     /* -------- HELP -------- */
     help: {
-
-    },
-
-    Fallback: {
       entry: {
         type: "spst.speak",
         params: {
-          utterance: "I'm having trouble understanding. Let's start over."
+          utterance:
+            "You can guess the word, ask for a hint, repeat the clue, or skip the word."
+        }
+      },
+
+      on: {
+        SPEAK_COMPLETE: "waitForGuess"
+      }
+    },
+
+
+    /* -------- VICTORY -------- */
+    Victory: {
+      entry: {
+        type: "spst.speak",
+        params: {
+          utterance: "Congratulations! You won the game."
         }
       },
       on: {
@@ -341,24 +425,18 @@ const dmMachine = setup({
       }
     },
 
-    /* -------- VICTORY -------- */
-    Victory: {
-      entry: {
-        type: "spst.speak",
-        params: { utterance: "Victory" },
-      },
-      on: { CLICK: "WaitToStart" },
-    },
-
     /* -------- GAME OVER -------- */
     GameOver: {
       entry: {
         type: "spst.speak",
-        params: { utterance: "Game Over" },
+        params: {
+          utterance: "Game over. Better luck next time."
+        }
       },
-      on: { CLICK: "WaitToStart" },
+      on: {
+        SPEAK_COMPLETE: "WaitToStart"
+      }
     },
-
   },
 });
 
