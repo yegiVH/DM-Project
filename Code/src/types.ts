@@ -14,7 +14,11 @@ export interface DMContext {
   clueIndex?: number;
   roundsCompleted?: number;
   maxRounds?: number;
+  score?: number;
   guessedWord?: string | null;
+  usedWords?: string[];
+  maxScore?: number;
+  minScore?: number;
 }
 
 export type DMEvents = 
