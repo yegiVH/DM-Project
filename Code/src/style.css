@@ -1,89 +1,195 @@
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
   font-family: Inter, system-ui, sans-serif;
-  background: linear-gradient(135deg, #1f1f2e, #2b2b45);
+  background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
   color: white;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  min-height: 100vh;
 }
 
+/* -------- CONTAINER -------- */
 .game-container {
-  width: 420px;
-  background: #2e2e4d;
-  border-radius: 16px;
+  width: 460px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
+  border-radius: 20px;
   padding: 2rem;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+/* -------- HEADER -------- */
+.header {
   text-align: center;
+  margin-bottom: 1.5rem;
 }
 
 h1 {
-  margin-bottom: 0.5rem;
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0 0 0.4rem;
+  background: linear-gradient(135deg, #a78bfa, #60a5fa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .subtitle {
-  opacity: 0.7;
-  margin-bottom: 1.5rem;
+  opacity: 0.55;
+  font-size: 0.95rem;
+  margin: 0;
 }
 
-.dialogue-box {
-  background: #1f1f33;
-  padding: 1.2rem;
+/* -------- GAME STATS BAR -------- */
+.game-stats {
+  display: flex;
+  justify-content: space-around;
+  background: rgba(0, 0, 0, 0.25);
   border-radius: 12px;
-  min-height: 80px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+.stat-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  opacity: 0.5;
+}
+
+.stat-value {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+/* Score color feedback */
+.stat-value.positive { color: #4ade80; }
+.stat-value.negative { color: #f87171; }
+.stat-value.neutral  { color: #e2e8f0; }
+
+/* Difficulty badge colors */
+.stat-value.difficulty-easy   { color: #4ade80; }
+.stat-value.difficulty-medium { color: #fbbf24; }
+.stat-value.difficulty-hard   { color: #f87171; }
+
+/* -------- CLUE DOTS -------- */
+.clue-dots {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 14px;
+  margin-bottom: 1rem;
+}
+
+.clue-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: background 0.3s ease;
+}
+
+.clue-dot.revealed {
+  background: #a78bfa;
+  border-color: #a78bfa;
+  box-shadow: 0 0 6px #a78bfa88;
+}
+
+/* -------- DIALOGUE BOX -------- */
+.dialogue-box {
+  background: rgba(0, 0, 0, 0.3);
+  border-left: 3px solid #a78bfa;
+  padding: 1.2rem 1.4rem;
+  border-radius: 0 12px 12px 0;
+  min-height: 90px;
   margin-bottom: 1.5rem;
   display: flex;
   align-items: center;
-  justify-content: center;
-  transition: all 0.3s ease;
 }
 
-.dialogue-box:hover {
-  transform: scale(1.02);
+.dialogue-box p {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.6;
+  opacity: 0.9;
 }
 
+/* -------- LISTENING INDICATOR -------- */
 .status {
+  text-align: center;
   margin-bottom: 1.5rem;
 }
 
 .listening {
-  font-size: 0.9rem;
-  padding: 0.4rem 0.8rem;
+  font-size: 0.85rem;
+  padding: 0.4rem 1rem;
   border-radius: 20px;
   display: inline-block;
+  transition: background-color 0.3s ease;
 }
 
 .listening.on {
-  background-color: #4caf50;
-  animation: pulse 1s infinite;
+  background-color: rgba(74, 222, 128, 0.2);
+  border: 1px solid #4ade80;
+  color: #4ade80;
+  animation: pulse 1.4s ease-in-out infinite;
 }
 
 .listening.off {
-  background-color: #555;
+  background-color: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* -------- BUTTON -------- */
+.controls {
+  text-align: center;
 }
 
 button {
-  background-color: #646cff;
+  background: linear-gradient(135deg, #7c3aed, #4f46e5);
   color: white;
   border: none;
-  padding: 0.6rem 1.2rem;
-  border-radius: 8px;
+  padding: 0.75rem 2rem;
+  border-radius: 10px;
   cursor: pointer;
-  transition: 0.2s ease;
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  transition: opacity 0.2s ease, transform 0.1s ease;
+  width: 100%;
 }
 
 button:hover {
-  background-color: #535bf2;
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+button:active {
+  transform: translateY(0);
 }
 
 button.on {
-  background-color: #4caf50;
-  animation: pulse 1s infinite;
+  background: linear-gradient(135deg, #16a34a, #15803d);
+  animation: pulse 1.4s ease-in-out infinite;
 }
 
+/* -------- PULSE ANIMATION -------- */
 @keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-  100% { transform: scale(1); }
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.7; }
 }
