@@ -156,8 +156,6 @@ const dmMachine = setup({
   initial: "Prepare",
 
   // deferEvents: unhandled events are queued and replayed when a state that handles them is entered.
-  // Important: states reached via ASR_NOINPUT must explicitly consume LISTEN_COMPLETE/ASR_NOINPUT
-  // to prevent deferred events from looping back and re-triggering those states.
   deferEvents: true,
 
   // The game's memory — values here persist across states and drive both logic and UI
@@ -227,7 +225,9 @@ const dmMachine = setup({
                 difficulty: extractDifficulty(event.nluValue),
               })),
             },
-            ASR_NOINPUT: { target: "askDifficultyAgain" },
+            // Don't speak immediately on silence — ASR session is still closing.
+            // Clear state and wait for LISTEN_COMPLETE (when ASR is truly done) to route.
+            ASR_NOINPUT: { actions: assign({ interpretation: null, difficulty: null }) },
             LISTEN_COMPLETE: [
               { guard: "hasDifficulty", target: "confirmDifficulty" },
               { target: "askDifficultyAgain" },
@@ -241,19 +241,11 @@ const dmMachine = setup({
           "#DM.roundCount"
         ),
 
-        // Reached via ASR_NOINPUT — explicitly consumes deferred speech events to prevent loops
-        askDifficultyAgain: {
-          entry: {
-            type: "spst.speak" as const,
-            params: { utterance: "Sorry, I didn't catch that. Try saying easy, medium, or hard." },
-          },
-          on: {
-            SPEAK_COMPLETE:  "ListenDifficulty",
-            LISTEN_COMPLETE: {},  // consume — prevents deferred event looping back on re-entry
-            ASR_NOINPUT:     {},  // consume
-            RECOGNISED:      {},  // consume
-          },
-        },
+        // Reached when no difficulty was heard — ASR is now fully done, safe to speak
+        askDifficultyAgain: speak(
+          "Sorry, I didn't catch that. Try saying easy, medium, or hard.",
+          "ListenDifficulty"
+        ),
       },
     },
 
@@ -294,8 +286,9 @@ const dmMachine = setup({
         // Store the NLU result as it arrives (before LISTEN_COMPLETE)
         RECOGNISED: { actions: "storeNLU" },
 
-        // Silence -> go to unknown (which also consumes deferred LISTEN_COMPLETE)
-        ASR_NOINPUT: { target: "unknown" },
+        // Don't speak immediately on silence — ASR session is still closing.
+        // Clear interpretation and wait for LISTEN_COMPLETE to route (same fallthrough as unknown).
+        ASR_NOINPUT: { actions: assign({ interpretation: null }) },
 
         // Route based on intent once the listen session ends
         LISTEN_COMPLETE: [
@@ -500,7 +493,8 @@ const dmMachine = setup({
       entry: { type: "spst.listen" },
       on: {
         RECOGNISED:  {actions: "storeNLU"},
-        ASR_NOINPUT: {target: "askPlayAgain"},
+        // Don't speak immediately on silence — wait for LISTEN_COMPLETE (ASR fully done) to route.
+        ASR_NOINPUT: { actions: assign({ interpretation: null }) },
         LISTEN_COMPLETE: [
           {guard: {type: "intentIs", params: {intent: "play_again"}}, target: "startNewGame"},
           {guard: {type: "intentIs", params: {intent: "give_up"}}, target: "WaitToStart"},
@@ -510,38 +504,21 @@ const dmMachine = setup({
     },
 
     /* -------- ASK PLAY AGAIN --------
-       Reached via ASR_NOINPUT — explicitly consumes deferred speech events to prevent loops.
-       (Same pattern as unknown and askDifficultyAgain.) */
-    askPlayAgain: {
-      entry: {
-        type: "spst.speak" as const,
-        params: { utterance: "Sorry, I didn't catch that. Say yes to play again, or no to quit." },
-      },
-      on: {
-        SPEAK_COMPLETE:  "listenPlayAgain",
-        LISTEN_COMPLETE: {},  // consume — prevents deferred event looping back on re-entry
-        ASR_NOINPUT:     {},  // consume
-        RECOGNISED:      {},  // consume
-      },
-    },
+       Reached via LISTEN_COMPLETE fallthrough — ASR is fully done, safe to speak. */
+    askPlayAgain: speak(
+      "Sorry, I didn't catch that. Say yes to play again, or no to quit.",
+      "listenPlayAgain"
+    ),
 
     /* -------- UNKNOWN --------
-       Reached when no intent matches or there is no input.
-       Explicitly consumes LISTEN_COMPLETE / ASR_NOINPUT / RECOGNISED so they are NOT deferred
-       back to waitForGuess — which would cause an infinite loop:
-       (deferred LISTEN_COMPLETE → unknown → waitForGuess → deferred LISTEN_COMPLETE → ...) */
-    unknown: {
-      entry: {
-        type: "spst.speak" as const,
-        params: { utterance: "Hmm, I didn't catch that. Try guessing the word, or say hint, repeat, or skip." },
-      },
-      on: {
-        SPEAK_COMPLETE:  "waitForGuess",
-        LISTEN_COMPLETE: {},  // consume
-        ASR_NOINPUT:     {},  // consume
-        RECOGNISED:      {},  // consume
-      },
-    },
+       Reached via LISTEN_COMPLETE fallthrough — ASR is fully done, safe to speak.
+       The wait-for-LISTEN_COMPLETE pattern (in waitForGuess, listenPlayAgain, ListenDifficulty)
+       ensures we only arrive here after the ASR session has fully closed, so no deferred
+       LISTEN_COMPLETE events can loop back. */
+    unknown: speak(
+      "Hmm, I didn't catch that. Try guessing the word, or say hint, repeat, or skip.",
+      "waitForGuess"
+    ),
   },
 });
 

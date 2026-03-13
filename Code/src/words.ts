@@ -3,101 +3,101 @@ const WORDS = {
     {
       word: "banana",
       clues: [
-        "It is something you can eat.",
-        "It is a fruit.",
-        "It has a yellow peel.",
-        "It is long and curved.",
-        "Monkeys love to eat it."
+        "You find it in kitchens and grocery stores.",
+        "It is a fruit that grows in warm countries.",
+        "It comes in a bunch and has a thick peel.",
+        "It turns from green to yellow as it ripens.",
+        "Monkeys are famous for loving this fruit."
       ]
     },
     {
       word: "pizza",
       clues: [
-        "It is a popular food.",
-        "It comes from Italy.",
-        "It usually has cheese.",
-        "It has tomato sauce and toppings.",
-        "It is round and cut into slices."
+        "It is something people order for dinner.",
+        "It originally comes from Italy.",
+        "It is baked in a very hot oven.",
+        "It is round, flat, and cut into slices.",
+        "It is topped with cheese and tomato sauce."
       ]
     },
     {
       word: "snowman",
       clues: [
-        "It appears in winter.",
-        "Children like making it.",
-        "It is built outside.",
-        "It is made of snow.",
-        "It often has a carrot nose."
+        "You only see it at a certain time of year.",
+        "It is built outdoors by people having fun.",
+        "It is made of three stacked balls.",
+        "It melts when the weather gets warmer.",
+        "It usually has a carrot for a nose and a scarf."
       ]
     },
     {
       word: "butterfly",
       clues: [
-        "It is a small animal.",
-        "It is an insect.",
-        "It has wings.",
-        "Its wings are colorful.",
-        "It starts life as a caterpillar."
+        "It is a living creature you can find in gardens.",
+        "It goes through four stages of life.",
+        "It begins its life inside a cocoon.",
+        "It has four large wings covered in tiny scales.",
+        "It starts life as a caterpillar before transforming."
       ]
     },
     {
       word: "rainbow",
       clues: [
-        "You can see it in the sky.",
-        "It appears after rain.",
-        "It is made by sunlight and water.",
-        "It has many colors.",
-        "It has seven colors."
+        "It is something you see in the sky.",
+        "It only appears under specific weather conditions.",
+        "Sunlight passing through water droplets creates it.",
+        "It forms an arc shape across the sky.",
+        "It displays red, orange, yellow, green, blue, indigo, and violet."
       ]
     },
     {
-      word: "dog",
+      word: "clock",
       clues: [
-        "It is an animal.",
-        "It is a common pet.",
-        "It barks.",
-        "People walk it in parks.",
-        "It is called man's best friend."
+        "It is an object found in most homes.",
+        "It has a practical everyday purpose.",
+        "It usually has a round face with numbers on it.",
+        "Its hands move continuously without stopping.",
+        "It tells you what time of day it is."
       ]
     },
     {
       word: "cake",
       clues: [
-        "It is a sweet food.",
-        "People eat it at parties.",
-        "It is baked in an oven.",
-        "It often has frosting.",
-        "Birthday candles go on it."
+        "It is something sweet that people make at home.",
+        "It is often shared at celebrations.",
+        "It is mixed, poured into a tin, and baked.",
+        "It is decorated with frosting or cream on top.",
+        "Candles are placed on it at birthday parties."
       ]
     },
     {
-      word: "ball",
+      word: "umbrella",
       clues: [
-        "It is used in games.",
-        "Children play with it.",
-        "It is round.",
-        "You can throw or kick it.",
-        "It is used in sports like football."
+        "It is something you carry with you.",
+        "It is most useful on certain types of days.",
+        "It opens and closes with a button or handle.",
+        "It has a round canopy stretched over metal ribs.",
+        "It keeps you dry when it rains."
       ]
     },
     {
-      word: "tree",
+      word: "mirror",
       clues: [
-        "It grows outside.",
-        "It is a plant.",
-        "It has leaves and branches.",
-        "Birds sit in it.",
-        "It has a trunk."
+        "It is a flat object found in most bathrooms.",
+        "It has a shiny, smooth surface.",
+        "Light bounces off it in a special way.",
+        "It shows everything reversed left to right.",
+        "You look into it to see your own face."
       ]
     },
     {
-      word: "car",
+      word: "kite",
       clues: [
-        "It is a machine.",
-        "People use it to travel.",
-        "It has four wheels.",
-        "It drives on roads.",
-        "People drive it to work."
+        "It is something people use outdoors for fun.",
+        "It works best on a windy day.",
+        "It is made of light material stretched over a frame.",
+        "You hold a long string to control it.",
+        "It flies high up in the sky."
       ]
     }
   ],
@@ -106,208 +106,207 @@ const WORDS = {
     {
       word: "astronaut",
       clues: [
-        "It is a profession.",
-        "This person travels far from Earth.",
-        "They wear a special suit.",
-        "They work in spacecraft.",
-        "They travel to space."
+        "This is a highly trained professional.",
+        "Very few people in history have done this job.",
+        "They must be in excellent physical condition.",
+        "They live and work in a zero-gravity environment.",
+        "They travel beyond Earth's atmosphere."
       ]
     },
     {
       word: "volcano",
       clues: [
-        "It is part of nature.",
-        "It looks like a mountain.",
-        "It exists in some hot regions.",
-        "It can erupt.",
-        "Lava comes out of it."
+        "It is a natural geological feature.",
+        "It is found along the edges of tectonic plates.",
+        "It can remain quiet for thousands of years.",
+        "When it becomes active, it is extremely dangerous.",
+        "It shoots molten rock and ash into the air."
       ]
     },
     {
-      word: "guitar",
+      word: "lighthouse",
       clues: [
-        "It is a musical instrument.",
-        "It is used in many songs.",
-        "It has strings.",
-        "People play it with their hands.",
-        "Rock musicians often play it."
+        "It is a tall structure built in a specific location.",
+        "It has been used for hundreds of years.",
+        "It is always found near water.",
+        "It emits a rotating beam of light.",
+        "It warns ships about dangerous rocks and coastlines."
       ]
     },
     {
       word: "pyramid",
       clues: [
-        "It is a large structure.",
-        "It is very old.",
-        "It was built by an ancient civilization.",
-        "It has a triangular shape.",
-        "Famous ones are in Egypt."
+        "It is an ancient man-made structure.",
+        "Building it required thousands of workers over decades.",
+        "It is made entirely of stone blocks.",
+        "Its four sides rise to meet at a single point.",
+        "The most famous ones were built in ancient Egypt."
       ]
     },
     {
-      word: "penguin",
+      word: "compass",
       clues: [
-        "It is a bird.",
-        "It cannot fly.",
-        "It swims very well.",
-        "It lives in cold places.",
-        "It lives in Antarctica."
+        "It is a small portable tool.",
+        "Explorers and hikers depend on it.",
+        "It works using Earth's magnetic field.",
+        "It always points in the same direction.",
+        "It tells you which way is north."
       ]
     },
     {
-      word: "camera",
+      word: "submarine",
       clues: [
-        "It is a device.",
-        "People use it to capture moments.",
-        "It records images.",
-        "Photographers use it.",
-        "It takes photos."
+        "It is a large vehicle.",
+        "It was first widely used in wartime.",
+        "It operates completely away from the surface.",
+        "It can stay hidden for weeks at a time.",
+        "It travels and operates underwater."
       ]
     },
     {
-      word: "bridge",
+      word: "auction",
       clues: [
-        "It is a structure.",
-        "It connects two places.",
-        "It is built over water or roads.",
-        "Cars and people cross it.",
-        "It lets you cross a river."
-      ]
-    },
-    {
-      word: "robot",
-      clues: [
-        "It is a machine.",
-        "It can perform tasks.",
-        "It can be programmed.",
-        "Factories often use them.",
-        "Some look like humans."
+        "It is a type of event.",
+        "People gather specifically to participate in it.",
+        "Items are presented one by one.",
+        "Participants compete by offering increasing amounts of money.",
+        "The item goes to whoever bids the highest price."
       ]
     },
     {
       word: "castle",
       clues: [
-        "It is a very large building.",
-        "It is from medieval times.",
-        "It has strong walls.",
-        "Kings and queens lived there.",
-        "It often has towers."
+        "It is a very large building with thick stone walls.",
+        "It was designed with defence in mind.",
+        "It often has a moat filled with water around it.",
+        "It was the home of powerful rulers in the Middle Ages.",
+        "Knights and soldiers were stationed there to protect it."
       ]
     },
     {
-      word: "desert",
+      word: "marathon",
       clues: [
-        "It is a place on Earth.",
-        "It is very dry.",
-        "It gets little rain.",
-        "There is often a lot of sand.",
-        "Camels live there."
+        "It is a type of event that takes place outdoors.",
+        "It requires months of preparation and training.",
+        "Thousands of people participate at the same time.",
+        "It takes most people several hours to complete.",
+        "It is a running race that covers exactly 42 kilometres."
+      ]
+    },
+    {
+      word: "glacier",
+      clues: [
+        "It is a natural formation found in cold regions.",
+        "It looks solid but moves very slowly.",
+        "It is made entirely of compressed snow and ice.",
+        "It carves valleys and shapes mountains over thousands of years.",
+        "It is a massive river of ice that flows downhill."
       ]
     }
   ],
 
   hard: [
     {
-      word: "microscope",
+      word: "renaissance",
       clues: [
-        "It is a scientific instrument.",
-        "It is used in laboratories.",
-        "Scientists use it in biology.",
-        "It magnifies tiny objects.",
-        "It lets you see cells."
+        "It refers to a period in history.",
+        "It began in one country before spreading across a continent.",
+        "It was driven by a renewed interest in ancient Greek and Roman ideas.",
+        "It saw explosive growth in art, science, and philosophy.",
+        "It was a cultural rebirth that took place in fourteenth to seventeenth century Europe."
       ]
     },
     {
       word: "algorithm",
       clues: [
-        "It is used in computing.",
-        "It solves problems step by step.",
-        "Programs rely on it.",
-        "It is a sequence of logical instructions.",
-        "It is the logic behind software."
+        "It is an abstract concept used across many fields.",
+        "It must be precise and unambiguous to work correctly.",
+        "It takes an input and produces a predictable output.",
+        "Every piece of software relies on it.",
+        "It is a finite set of step-by-step instructions for solving a problem."
       ]
     },
     {
-      word: "constellation",
+      word: "paradox",
       clues: [
-        "It is seen at night.",
-        "It is found in the sky.",
-        "It is a pattern.",
-        "It is made of stars.",
-        "Examples include Orion."
+        "It is a concept found in logic and philosophy.",
+        "At first glance it seems wrong or impossible.",
+        "On closer inspection, it reveals a deeper truth.",
+        "A famous example involves a man who shaves everyone who does not shave themselves.",
+        "It is a statement that contradicts itself yet may still be true."
       ]
     },
     {
       word: "photosynthesis",
       clues: [
-        "It is a natural process.",
-        "Plants perform it.",
-        "It uses sunlight.",
-        "It produces energy for plants.",
-        "It turns light into food for plants."
+        "It is a biological process.",
+        "It happens inside a specific part of plant cells.",
+        "It requires two things from the environment to work.",
+        "It releases a gas that animals need to breathe.",
+        "Plants use sunlight and carbon dioxide to produce sugar and oxygen."
       ]
     },
     {
-      word: "pharaoh",
+      word: "archipelago",
       clues: [
-        "It is a historical title.",
-        "It existed thousands of years ago.",
-        "It belonged to rulers.",
-        "It was used in ancient Egypt.",
-        "It means the king of Egypt."
+        "It is a geographical term.",
+        "It describes a specific arrangement of land and water.",
+        "Countries like Indonesia and the Philippines are examples.",
+        "It consists of many islands scattered across the sea.",
+        "It is a group or chain of islands close together."
       ]
     },
     {
-      word: "telescope",
+      word: "placebo",
       clues: [
-        "It is a scientific tool.",
-        "Astronomers use it.",
-        "It observes distant objects.",
-        "It is used to study space.",
-        "It helps see planets and stars."
+        "It is a concept used in medicine and research.",
+        "It contains no active ingredient.",
+        "Patients who receive it often report real improvements.",
+        "It is used in clinical trials as a control.",
+        "It is a fake treatment that works because the patient believes it is real."
       ]
     },
     {
       word: "gravity",
       clues: [
-        "It is a force.",
-        "It exists everywhere in the universe.",
-        "It pulls objects together.",
-        "It keeps planets in orbit.",
-        "It keeps us on Earth."
+        "It is one of the four fundamental forces of nature.",
+        "Its strength depends on mass and distance.",
+        "It was first described mathematically by Isaac Newton.",
+        "Albert Einstein later explained it as a curvature of space and time.",
+        "It is the force that pulls all objects with mass toward each other."
       ]
     },
     {
-      word: "ecosystem",
+      word: "propaganda",
       clues: [
-        "It exists in nature.",
-        "It includes living things.",
-        "Animals and plants interact there.",
-        "They share an environment.",
-        "Forests and oceans are examples."
+        "It is a form of communication.",
+        "It is produced and spread deliberately.",
+        "It targets emotions rather than reason.",
+        "Governments and political groups use it to shape public opinion.",
+        "It is biased information designed to promote a particular point of view."
       ]
     },
     {
       word: "philosopher",
       clues: [
-        "It is a type of thinker.",
-        "They study ideas.",
-        "They ask deep questions.",
-        "They think about life and knowledge.",
-        "Examples include Socrates and Plato."
+        "This describes a type of thinker.",
+        "They are not satisfied with simple or obvious answers.",
+        "They question things most people take for granted.",
+        "They explore ideas about existence, knowledge, ethics, and reality.",
+        "Famous examples include Socrates, Aristotle, Kant, and Nietzsche."
       ]
     },
     {
-      word: "voltage",
+      word: "fermentation",
       clues: [
-        "It is related to electricity.",
-        "It exists in circuits.",
-        "It measures electrical potential.",
-        "Batteries produce it.",
-        "It pushes electric current."
+        "It is a natural chemical process.",
+        "It has been used by humans for thousands of years.",
+        "Microorganisms such as yeast or bacteria drive it.",
+        "It converts sugars into other substances without using oxygen.",
+        "It is the process that turns grapes into wine and grain into beer."
       ]
     }
   ]
 };
-
 
 export default WORDS;
