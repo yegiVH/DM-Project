@@ -1,1 +1,2 @@
-# DM-Project
+# Mind Reader — Voice-Based Dialogue System
+Mind Reader is a voice-controlled word guessing game built as part of a Dialogue Systems course. The system picks a secret word and delivers spoken clues — the player responds entirely by voice, guessing the word, asking for hints, or skipping. The full conversation flow is modelled as a finite state machine using XState, with Azure Speech Services handling speech recognition, text-to-speech, and natural language understanding.
