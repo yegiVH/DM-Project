@@ -99,6 +99,96 @@ const WORDS = {
         "You hold a long string to control it.",
         "It flies high up in the sky."
       ]
+    },
+    {
+      word: "guitar",
+      clues: [
+        "It is an object found in many homes.",
+        "It is used to create something people enjoy.",
+        "It has a long neck and a hollow body.",
+        "You pluck or strum its strings with your fingers.",
+        "It is a musical instrument with six strings."
+      ]
+    },
+    {
+      word: "elephant",
+      clues: [
+        "It is a living creature found in the wild.",
+        "It is one of the largest animals on land.",
+        "It lives in herds and is known for its memory.",
+        "It has large ears and thick grey skin.",
+        "It has a long trunk it uses to drink and grab things."
+      ]
+    },
+    {
+      word: "library",
+      clues: [
+        "It is a place you can visit for free.",
+        "It is found in most towns and cities.",
+        "You need a card to borrow things from it.",
+        "You must be quiet when you are inside.",
+        "It is a building where you can borrow books."
+      ]
+    },
+    {
+      word: "bicycle",
+      clues: [
+        "It is something people use to get around.",
+        "It is a popular form of exercise.",
+        "It has no engine and runs on human power.",
+        "It has two wheels and a set of pedals.",
+        "You sit on a saddle and steer with handlebars."
+      ]
+    },
+    {
+      word: "chocolate",
+      clues: [
+        "It is something many people enjoy.",
+        "It is made from a plant grown in tropical regions.",
+        "It comes in dark, milk, and white varieties.",
+        "It melts in your mouth and in warm temperatures.",
+        "It is a sweet food made from cocoa beans."
+      ]
+    },
+    {
+      word: "helicopter",
+      clues: [
+        "It is a type of vehicle.",
+        "It does not need a runway to take off or land.",
+        "It can hover in one place in the air.",
+        "Its spinning blades lift it off the ground.",
+        "It is an aircraft that flies using rotating blades above it."
+      ]
+    },
+    {
+      word: "treasure",
+      clues: [
+        "It is something people search and compete for.",
+        "It is often described in adventure stories.",
+        "It is typically hidden in a secret location.",
+        "It is guarded or marked by a map or riddle.",
+        "It is a collection of valuable items like gold and jewels."
+      ]
+    },
+    {
+      word: "volcano",
+      clues: [
+        "It is a natural feature you can see from far away.",
+        "It can be found on land or under the ocean.",
+        "It has a crater at the top.",
+        "It can remain quiet for thousands of years before waking.",
+        "It is a mountain that can erupt and shoot out lava and ash."
+      ]
+    },
+    {
+      word: "firework",
+      clues: [
+        "It is something you see at special events.",
+        "It is only used at certain times of year.",
+        "It is launched into the sky.",
+        "It makes a loud bang and a bright flash.",
+        "It is an explosive device that produces colourful lights in the sky."
+      ]
     }
   ],
 
@@ -202,6 +292,96 @@ const WORDS = {
         "It carves valleys and shapes mountains over thousands of years.",
         "It is a massive river of ice that flows downhill."
       ]
+    },
+    {
+      word: "labyrinth",
+      clues: [
+        "It is a type of structure or design.",
+        "People can get lost inside it.",
+        "It has been used in myths and legends for thousands of years.",
+        "It is filled with twisting paths and dead ends.",
+        "It is a complex network of passages where it is difficult to find the way out."
+      ]
+    },
+    {
+      word: "avalanche",
+      clues: [
+        "It is a natural event.",
+        "It happens suddenly and without warning.",
+        "It occurs in mountainous regions in cold climates.",
+        "It can bury entire roads and buildings in seconds.",
+        "It is a rapid flow of snow sliding down a mountain slope."
+      ]
+    },
+    {
+      word: "expedition",
+      clues: [
+        "It is a type of organised journey.",
+        "It usually has a clear scientific or exploratory purpose.",
+        "It involves a team of people working together.",
+        "It often goes to remote or dangerous places.",
+        "It is a carefully planned trip to explore or research an unknown area."
+      ]
+    },
+    {
+      word: "observatory",
+      clues: [
+        "It is a type of building with a special purpose.",
+        "It is usually built on top of a hill or mountain.",
+        "Scientists work inside it.",
+        "It has a large domed roof that can open.",
+        "It is a facility equipped with telescopes for studying the night sky."
+      ]
+    },
+    {
+      word: "cathedral",
+      clues: [
+        "It is a large and impressive building.",
+        "It took many decades or even centuries to build.",
+        "It is the most important church in a region.",
+        "It often has tall spires and intricate stained-glass windows.",
+        "It is the principal church of a bishop's diocese."
+      ]
+    },
+    {
+      word: "tournament",
+      clues: [
+        "It is a type of competitive event.",
+        "Many participants take part, but only one can win.",
+        "It is divided into rounds, with losers eliminated each time.",
+        "It is common in sports, chess, and card games.",
+        "It is a series of contests where competitors face each other until a champion is found."
+      ]
+    },
+    {
+      word: "democracy",
+      clues: [
+        "It is a concept in political science.",
+        "Not all countries in the world use it.",
+        "It gives ordinary people a say in how they are governed.",
+        "It relies on elections and majority decisions.",
+        "It is a system of government where citizens vote to choose their leaders."
+      ]
+    },
+    {
+      word: "ecosystem",
+      clues: [
+        "It is a concept from biology and environmental science.",
+        "It can be as small as a pond or as large as an ocean.",
+        "Every part of it depends on the other parts.",
+        "When one part is disrupted, the whole system can collapse.",
+        "It is a community of living organisms interacting with their physical environment."
+      ]
+    },
+    {
+      word: "manuscript",
+      clues: [
+        "It is a type of document.",
+        "Before printing was invented, all books were this.",
+        "They were produced by hand, often by monks.",
+        "Some are hundreds of years old and kept in museums.",
+        "It is a handwritten text, especially one written before the age of printing."
+      ]
     }
   ],
 
@@ -304,6 +484,96 @@ const WORDS = {
         "Microorganisms such as yeast or bacteria drive it.",
         "It converts sugars into other substances without using oxygen.",
         "It is the process that turns grapes into wine and grain into beer."
+      ]
+    },
+    {
+      word: "enlightenment",
+      clues: [
+        "It refers to a period in intellectual history.",
+        "It took place primarily in the seventeenth and eighteenth centuries.",
+        "It championed reason, science, and individual rights over tradition and religion.",
+        "It gave rise to ideas that shaped modern democracy and human rights.",
+        "It was an intellectual movement in Europe that prioritised rational thought over superstition."
+      ]
+    },
+    {
+      word: "consciousness",
+      clues: [
+        "It is a concept studied in philosophy, neuroscience, and psychology.",
+        "No one fully agrees on what it is or where it comes from.",
+        "Animals may have varying degrees of it.",
+        "It is what allows you to experience the world subjectively.",
+        "It is the state of being aware of and able to think about your own existence."
+      ]
+    },
+    {
+      word: "sovereignty",
+      clues: [
+        "It is a concept in political science and international law.",
+        "It is what distinguishes an independent nation from a territory.",
+        "It can be held by a monarch, a parliament, or the people.",
+        "Wars have been fought throughout history to claim or defend it.",
+        "It is the supreme authority of a state to govern itself without external control."
+      ]
+    },
+    {
+      word: "anthropology",
+      clues: [
+        "It is an academic discipline.",
+        "It studies something that is both biological and cultural.",
+        "It includes the study of ancient fossils as well as living societies.",
+        "It examines language, customs, religion, and social structures.",
+        "It is the scientific study of human beings, their origins, behaviour, and societies."
+      ]
+    },
+    {
+      word: "bureaucracy",
+      clues: [
+        "It is a concept in politics and organisational theory.",
+        "It is often associated with slowness and excessive paperwork.",
+        "It exists in governments, large companies, and institutions.",
+        "It relies on rigid rules, procedures, and a hierarchy of officials.",
+        "It is a system of administration carried out by groups of appointed officials following fixed rules."
+      ]
+    },
+    {
+      word: "mimicry",
+      clues: [
+        "It is a concept found in biology and nature.",
+        "It is an evolutionary strategy used by many species.",
+        "One organism copies another to gain an advantage.",
+        "A harmless species may copy a dangerous one to avoid predators.",
+        "It is when one organism evolves to resemble another species in appearance or behaviour."
+      ]
+    },
+    {
+      word: "hegemony",
+      clues: [
+        "It is a concept in political science and sociology.",
+        "It goes beyond military strength alone.",
+        "It describes how one group shapes what others think of as normal.",
+        "Gramsci was a key thinker who wrote about it in relation to culture.",
+        "It is the dominance of one state or group over others through political, cultural, or economic influence."
+      ]
+    },
+    {
+      word: "thermodynamics",
+      clues: [
+        "It is a branch of physics.",
+        "It has four fundamental laws.",
+        "It explains why a hot cup of coffee eventually cools down.",
+        "One of its laws states that energy can neither be created nor destroyed.",
+        "It is the study of heat, energy, and how they relate to work and physical systems."
+      ]
+    },
+    {
+      word: "synesthesia",
+      clues: [
+        "It is a neurological phenomenon.",
+        "Only a small percentage of people experience it.",
+        "It happens when one sense automatically triggers another.",
+        "Someone might see colours when they hear music, or taste shapes.",
+        "It is a condition where stimulation of one sense leads to an involuntary experience in another."
       ]
     }
   ]

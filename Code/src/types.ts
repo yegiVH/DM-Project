@@ -19,9 +19,10 @@ export interface DMContext {
   usedWords?: string[];
   maxScore?: number;
   minScore?: number;
+  consecutiveFailures?: number;
 }
 
-export type DMEvents = 
+export type DMEvents =
   | SpeechStateExternalEvent
   | { type: "CLICK" }
   | { type: "DONE" }
@@ -29,7 +30,8 @@ export type DMEvents =
   | { type: "RECOGNISED"; value: any; nluValue?: NLUObject }
   | { type: "LISTEN_COMPLETE" }
   | { type: "SPEAK_COMPLETE" }
-  | { type: "ASR_NOINPUT" };
+  | { type: "ASR_NOINPUT" }
+  | { type: "TEXT_INPUT"; value: string };
 
 
 export interface Entity {

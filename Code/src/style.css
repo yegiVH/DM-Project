@@ -109,6 +109,42 @@ h1 {
   box-shadow: 0 0 6px #a78bfa88;
 }
 
+/* -------- CLUE DISPLAY -------- */
+.clue-display {
+  margin-bottom: 1rem;
+  padding: 0 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.clue-item {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  border-radius: 6px;
+  padding: 0.4rem 0.7rem;
+}
+
+.clue-previous {
+  color: #7dd3fc;
+  opacity: 0.55;
+}
+
+.clue-current {
+  color: #e2e8f0;
+  font-size: 1.05rem;
+  font-weight: 500;
+  background: rgba(167, 139, 250, 0.1);
+  border-left: 3px solid #a78bfa;
+}
+
+.clue-number {
+  font-weight: 700;
+  opacity: 0.75;
+  margin-right: 0.2rem;
+}
+
 /* -------- DIALOGUE BOX -------- */
 .dialogue-box {
   background: rgba(0, 0, 0, 0.3);
@@ -186,6 +222,68 @@ button:active {
 button.on {
   background: linear-gradient(135deg, #16a34a, #15803d);
   animation: pulse 1.4s ease-in-out infinite;
+}
+
+/* -------- TEXT INPUT FALLBACK -------- */
+.text-fallback {
+  margin-bottom: 1rem;
+  padding: 0.75rem 1rem;
+  background: rgba(251, 191, 36, 0.07);
+  border: 1px solid rgba(251, 191, 36, 0.3);
+  border-radius: 10px;
+}
+
+.text-fallback.hidden {
+  display: none;
+}
+
+.fallback-hint {
+  margin: 0 0 0.5rem;
+  font-size: 0.8rem;
+  color: #fbbf24;
+  opacity: 0.9;
+}
+
+.fallback-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.fallback-input {
+  flex: 1;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  padding: 0.5rem 0.75rem;
+  color: white;
+  font-size: 0.95rem;
+  font-family: inherit;
+  outline: none;
+}
+
+.fallback-input:focus {
+  border-color: #a78bfa;
+}
+
+.fallback-input::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.fallback-btn {
+  background: rgba(167, 139, 250, 0.25) !important;
+  border: 1px solid #a78bfa !important;
+  padding: 0.5rem 1rem !important;
+  width: auto !important;
+  border-radius: 8px !important;
+  font-size: 0.9rem !important;
+}
+
+.fallback-cmds {
+  margin: 0.5rem 0 0;
+  font-size: 0.75rem;
+  opacity: 0.4;
+  text-align: center;
+  letter-spacing: 0.05em;
 }
 
 /* -------- PULSE ANIMATION -------- */
