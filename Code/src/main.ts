@@ -10,22 +10,27 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
     </div>
 
     <div class="game-stats" id="game-stats">
+
       <div class="stat">
         <span class="stat-label">Round</span>
         <span class="stat-value" id="round-display">—</span>
       </div>
+
       <div class="stat">
         <span class="stat-label">Score</span>
         <span class="stat-value" id="score-display">—</span>
       </div>
+
       <div class="stat">
         <span class="stat-label">Difficulty</span>
         <span class="stat-value" id="difficulty-display">—</span>
       </div>
+
       <div class="stat">
         <span class="stat-label">Best</span>
         <span class="stat-value" id="best-score-display">—</span>
       </div>
+      
     </div>
 
     <div id="clue-dots" class="clue-dots"></div>

@@ -29,22 +29,26 @@ const settings: Settings = {
   azureLanguageCredentials,
   azureCredentials,
   azureRegion: "swedencentral",
-  asrDefaultCompleteTimeout: 0,       // don't wait after speech ends before processing
+  asrDefaultCompleteTimeout: 0,       
   asrDefaultNoInputTimeout: 15000,    // trigger ASR_NOINPUT after 15 seconds of silence
   locale: "en-US",
   ttsDefaultVoice: "en-US-DavisNeural",
 };
 
 /* ---------------- Text input parser ---------------- */
-
 // Converts typed text into a game intent (used by the TEXT_INPUT fallback)
 function parseTextCommand(text: string): string {
   const t = text.toLowerCase().trim();
-  if (t === "hint")                              return "ask_hint";
-  if (t === "skip")                              return "skip_word";
-  if (t === "give up" || t === "giveup")         return "give_up";
-  if (t === "help")                              return "help";
-  if (t === "repeat")                            return "repeat_clue";
+  if (t === "hint")                              
+    return "ask_hint";
+  if (t === "skip")                              
+    return "skip_word";
+  if (t === "give up" || t === "giveup")         
+    return "give_up";
+  if (t === "help")                              
+    return "help";
+  if (t === "repeat")                            
+    return "repeat_clue";
   return "guess_word";
 }
 
@@ -56,7 +60,8 @@ function extractDifficulty(nlu: NLUObject | null): "easy" | "medium" | "hard" | 
   for (const entity of nlu.entities) {
     if (entity.category === "difficulty") {
       const value = entity.text.trim().toLowerCase();
-      if (value === "easy" || value === "medium" || value === "hard") return value;
+      if (value === "easy" || value === "medium" || value === "hard") 
+        return value;
     }
   }
   return null;
@@ -66,7 +71,8 @@ function extractDifficulty(nlu: NLUObject | null): "easy" | "medium" | "hard" | 
 function getWord(nlu: NLUObject | null): string | null {
   if (!nlu) return null;
   for (const entity of nlu.entities) {
-    if (entity.category === "word_guess") return entity.text.trim().toLowerCase();
+    if (entity.category === "word_guess") 
+      return entity.text.trim().toLowerCase();
   }
   return null;
 }
@@ -121,18 +127,20 @@ const dmMachine = setup({
     events: {} as DMEvents,
   },
 
-  /* ---- Reusable actions ---- */
   actions: {
-    // Sends a SPEAK command to SpeechState and also updates the on-screen text display
+    //sends a SPEAK command to SpeechState and also updates the on-screen text display
     "spst.speak": ({ context }, params: { utterance: string }) => {
       context.spstRef.send({ type: "SPEAK", value: { utterance: params.utterance } });
       const el = document.getElementById("system-text");
       if (el) el.textContent = params.utterance;
     },
 
-    // Sends a LISTEN command to SpeechState with NLU enabled
+    // Sends a LISTEN command to SpeechState with NLU enabled.
+    // Skip if consecutiveFailures >= 3 — the text fallback is shown at that point,
     "spst.listen": ({ context }) => {
-      context.spstRef.send({ type: "LISTEN", value: { nlu: true } });
+      if ((context.consecutiveFailures ?? 0) < 3) {
+        context.spstRef.send({ type: "LISTEN", value: { nlu: true } });
+      }
     },
 
     // Resets all game state to its initial values (used by WaitToStart and startNewGame)
@@ -148,12 +156,12 @@ const dmMachine = setup({
       consecutiveFailures: 0,
     }),
 
-    // Increments the rounds-completed counter by 1 (used by revealWord)
+    //Increments the rounds-completed counter by 1 (used by revealWord)
     "incrementRounds": assign({
       roundsCompleted: ({ context }) => (context.roundsCompleted ?? 0) + 1,
     }),
 
-    // Saves the NLU result from a RECOGNISED event into context (used by waitForGuess, listenPlayAgain)
+    //saves the NLU result from a RECOGNISED event into context (used by waitForGuess, listenPlayAgain)
     "storeNLU": assign(({ event }) => ({
       interpretation: (event as any).nluValue ?? null,
     })),
@@ -192,13 +200,13 @@ const dmMachine = setup({
   id: "DM",
   initial: "Prepare",
 
-  // deferEvents: unhandled events are queued and replayed when a state that handles them is entered.
+  //deferEvents: unhandled events are queued and replayed when a state that handles them is entered.
   deferEvents: true,
 
-  // The game's memory — values here persist across states and drive both logic and UI
+  // The game's memory 
   context: ({ spawn }) => ({
     spstRef: spawn(speechstate, { input: settings }), // the speech engine actor
-    lastResult: null,       // raw ASR hypothesis
+    lastResult: null,       
     interpretation: null,   // NLU result (intents + entities) from the last RECOGNISED event
     difficulty: null,       // chosen difficulty: "easy" | "medium" | "hard"
     currentWord: null,      // the word the player is trying to guess this round
@@ -219,7 +227,9 @@ const dmMachine = setup({
     /* -------- PREPARE --------
        Initialises the SpeechState actor. Waits for ASRTTS_READY before proceeding. */
     Prepare: {
-      entry: ({ context }) => context.spstRef.send({ type: "PREPARE" }),
+      entry: (
+        { context }) => context.spstRef.send({ type: "PREPARE" }
+        ),
       on: { ASRTTS_READY: "WaitToStart" },
     },
 
@@ -240,14 +250,14 @@ const dmMachine = setup({
 
     /* -------- INTRO --------
        Welcomes the player on first launch, then moves to difficulty selection. */
-    intro: speak("Hey, welcome to Mind Reader! I'll think of a word and drop some clues — your job is to guess it.", "chooseDifficulty"),
+    intro: speak(
+      "Hey, welcome to Mind Reader! I'll think of a word and drop some clues — your job is to guess it.", "chooseDifficulty"),
 
     /* -------- CHOOSE DIFFICULTY --------
        Nested states: ask -> listen -> confirm or retry. */
     chooseDifficulty: {
       initial: "AskDifficulty",
       states: {
-
         // Prompts the player to say a difficulty level
         AskDifficulty: speak("How hard do you want to play? Say easy, medium, or hard.", "ListenDifficulty"),
 
@@ -263,8 +273,6 @@ const dmMachine = setup({
                 difficulty: extractDifficulty(event.nluValue),
               })),
             },
-            // Don't speak immediately on silence — ASR session is still closing.
-            // Clear state and wait for LISTEN_COMPLETE (when ASR is truly done) to route.
             ASR_NOINPUT: { actions: assign({ interpretation: null, difficulty: null }) },
             LISTEN_COMPLETE: [
               { guard: "hasDifficulty", target: "confirmDifficulty" },
@@ -279,7 +287,7 @@ const dmMachine = setup({
           "#DM.roundCount"
         ),
 
-        // Reached when no difficulty was heard — ASR is now fully done, safe to speak
+        // Reached when no difficulty was heard
         askDifficultyAgain: speak(
           "Sorry, I didn't catch that. Try saying easy, medium, or hard.",
           "ListenDifficulty"
@@ -288,21 +296,22 @@ const dmMachine = setup({
     },
 
     /* -------- ROUND START --------
-       Picks a random word for the current difficulty (avoiding repeats),
+       Picks a random word for the current difficulty,
        sets up clues, and immediately transitions to give the first clue. */
     round: {
       entry: assign(({ context }) => {
-        const difficulty  = context.difficulty as keyof typeof WORDS;
-        const wordList    = WORDS[difficulty];
+        const difficulty = context.difficulty as keyof typeof WORDS;
+        const wordList = WORDS[difficulty];
         // Filter out words already used this game; fall back to full list if all exhausted
-        const available   = wordList.filter(w => !context.usedWords?.includes(w.word));
-        const pool        = available.length > 0 ? available : wordList;
-        const randomWord  = pool[Math.floor(Math.random() * pool.length)];
+        const available = wordList.filter(w => !context.usedWords?.includes(w.word));
+        const pool = available.length > 0 ? available : wordList;
+        const randomWord = pool[Math.floor(Math.random() * pool.length)];
+
         return {
-          currentWord: randomWord.word,
-          clues:       randomWord.clues,
-          clueIndex:   0,
-          usedWords:   [...(context.usedWords ?? []), randomWord.word],
+          currentWord : randomWord.word,
+          clues : randomWord.clues,
+          clueIndex : 0,
+          usedWords: [...(context.usedWords ?? []), randomWord.word],
         };
       }),
       always: "giveClue",
@@ -315,19 +324,16 @@ const dmMachine = setup({
       "waitForGuess"
     ),
 
-    /* -------- WAIT FOR GUESS --------
-       The main gameplay state. Listens for the player's response and routes
+    /* -------- WAIT FOR GUESS -------- (THE CORE STATE)
+       Listens for the player's response and routes
        to the appropriate state based on the NLU top intent. */
     waitForGuess: {
       entry: { type: "spst.listen" },
       on: {
-        // Store the NLU result as it arrives; reset the failure counter since user spoke
         RECOGNISED: {
           actions: ["storeNLU", assign({ consecutiveFailures: 0 })],
         },
 
-        // Don't speak immediately on silence — ASR session is still closing.
-        // Increment consecutive failure counter; text fallback appears after 3.
         ASR_NOINPUT: {
           actions: assign(({ context }) => ({
             interpretation: null,
@@ -335,20 +341,37 @@ const dmMachine = setup({
           })),
         },
 
-        // Route based on intent once the listen session ends
         LISTEN_COMPLETE: [
           {
             guard: { type: "intentIs", params: { intent: "guess_word" } },
-            actions: assign(({ context }) => ({ guessedWord: getWord(context.interpretation) })),
+            actions: assign(({ context }) => ({ guessedWord: getWord(context.interpretation)})),
             target: "checkGuess",
           },
-          { guard: { type: "intentIs", params: { intent: "ask_hint"    } }, target: "hint"         },
-          { guard: { type: "intentIs", params: { intent: "give_up"     } }, target: "abandonRound" },
-          { guard: { type: "intentIs", params: { intent: "repeat_clue" } }, target: "repeatClue"   },
-          { guard: { type: "intentIs", params: { intent: "skip_word"   } }, target: "skipWord"     },
-          { guard: { type: "intentIs", params: { intent: "help"        } }, target: "help"         },
-          { guard: { type: "intentIs", params: { intent: "play_again"  } }, target: "abandonRound" },
-          { target: "unknown" }, // fallback: unrecognised intent
+          {
+            guard: {type: "intentIs", params: {intent: "ask_hint"}}, 
+            target: "hint"
+          },
+          {
+            guard: {type: "intentIs", params: {intent: "give_up"}}, 
+            target: "abandonRound" 
+          },
+          {
+            guard: {type: "intentIs", params: {intent: "repeat_clue"}}, 
+            target: "repeatClue"   
+          },
+          {
+            guard: {type: "intentIs", params: {intent: "skip_word"}}, 
+            target: "skipWord"     
+          },
+          {
+            guard: {type: "intentIs", params: {intent: "help"}}, 
+            target: "help"         
+          },
+          {
+            guard: {type: "intentIs", params: {intent: "play_again"}}, 
+            target: "abandonRound" 
+          },
+          {target: "unknown" }, //fallback: unrecognised intent
         ],
 
         // Text input fallback — shown after 3 consecutive ASR_NOINPUT events
@@ -419,8 +442,7 @@ const dmMachine = setup({
     },
 
     /* -------- INCORRECT --------
-       Deducts 1 point, then auto-advances to the next clue (via checkAfterIncorrect -> hint)
-       so the on-screen progress dots update after every wrong guess. */
+       reduce 1 point, then auto-advances to the next clue (via checkAfterIncorrect -> hint)*/
     incorrect: {
       entry: [
         assign({ score: ({ context }) => (context.score ?? 0) - 1 }),
@@ -452,8 +474,8 @@ const dmMachine = setup({
     checkAfterIncorrect: {
       always: [
         {guard: "isGameOver", target: "GameOver"},
-        {guard: "isVictory", target: "Victory"},  // score could land exactly on maxScore after -1
-        {guard: "hasMoreClues", target: "hint"},  // auto-advance to next clue
+        {guard: "isVictory", target: "Victory"}, 
+        {guard: "hasMoreClues", target: "hint"}, 
         {target: "revealWord"},
       ],
     },
@@ -471,7 +493,7 @@ const dmMachine = setup({
     },
 
     /* -------- REVEAL WORD --------
-       All clues were shown but the player still couldn't guess.
+       this happens when clues were shown but the player still couldn't guess.
        Reveals the answer, increments rounds, then routes through checkAfterSkip
        so max-rounds and game-over conditions are still checked. */
     revealWord: {
@@ -488,7 +510,7 @@ const dmMachine = setup({
     },
 
     /* -------- ROUND COUNT --------
-       Announces the upcoming round number, then starts the round. */
+       Announces the upcoming round number, then starts the round.*/
     roundCount: speak(
       ctx => `Round ${(ctx.roundsCompleted ?? 0) + 1} — I've got a new word. Let's see if you can get it!`,
       "round"
@@ -509,18 +531,18 @@ const dmMachine = setup({
     },
 
     /* -------- NO MORE CLUES --------
-       All clues have been revealed; player must now guess without further help. */
+       All clues have been shown; player must now guess without further help. */
     noMoreClues: speak("That's all the clues I've got! Give it your best guess.", "waitForGuess"),
 
     /* -------- REPEAT CLUE --------
-       Re-reads the current clue without advancing clueIndex. */
+       Re-reads the current clue without advancing clueIndex.*/
     repeatClue: speak(
       ctx => `Sure! Clue ${(ctx.clueIndex ?? 0) + 1} again: ${ctx.clues?.[ctx.clueIndex ?? 0]}`,
       "waitForGuess"
     ),
 
     /* -------- SKIP WORD --------
-       Player opts to skip the current word. Costs 2 points (more than a wrong guess)
+       Player chooses to skip the current word. Costs 2 points (more than a wrong guess)
        and increments rounds. Routes through checkAfterSkip for end-game checks. */
     skipWord: {
       entry: [
@@ -540,14 +562,14 @@ const dmMachine = setup({
 
     /* -------- ABANDON ROUND --------
        Player gave up or asked to play again mid-round.
-       Reveals the word and asks if they want to play again. */
+       Reveals the word and asks if they want to play again.*/
     abandonRound: speak(
       ctx => `Fair enough! The word was ${ctx.currentWord}. Want to play again?`,
       "listenPlayAgain"
     ),
 
     /* -------- HELP --------
-       Describes the available voice commands, then returns to listening. */
+       says the available voice commands, then returns to listening. */
     help: speak(
       "Here's what you can do: guess the word, say hint for another clue, say repeat to hear the clue again, say skip to move on to a new word, or say give up to abandon the round.",
       "waitForGuess"
@@ -588,28 +610,28 @@ const dmMachine = setup({
       entry: { type: "spst.listen" },
       on: {
         RECOGNISED:  {actions: "storeNLU"},
-        // Don't speak immediately on silence — wait for LISTEN_COMPLETE (ASR fully done) to route.
         ASR_NOINPUT: { actions: assign({ interpretation: null }) },
         LISTEN_COMPLETE: [
-          {guard: {type: "intentIs", params: {intent: "play_again"}}, target: "startNewGame"},
-          {guard: {type: "intentIs", params: {intent: "give_up"}}, target: "WaitToStart"},
+          {
+            guard: {type: "intentIs", params: {intent: "play_again"}}, 
+            target: "startNewGame"
+          },
+          {
+            guard: {type: "intentIs", params: {intent: "give_up"}}, 
+            target: "WaitToStart"
+          },
           {target: "askPlayAgain"},
         ],
       },
     },
 
-    /* -------- ASK PLAY AGAIN --------
-       Reached via LISTEN_COMPLETE fallthrough — ASR is fully done, safe to speak. */
+    /* -------- ASK PLAY AGAIN -------- */
     askPlayAgain: speak(
       "Sorry, I didn't catch that. Say yes to play again, or no to quit.",
       "listenPlayAgain"
     ),
 
-    /* -------- UNKNOWN --------
-       Reached via LISTEN_COMPLETE fallthrough — ASR is fully done, safe to speak.
-       The wait-for-LISTEN_COMPLETE pattern (in waitForGuess, listenPlayAgain, ListenDifficulty)
-       ensures we only arrive here after the ASR session has fully closed, so no deferred
-       LISTEN_COMPLETE events can loop back. */
+    /* -------- UNKNOWN --------*/
     unknown: speak(
       "Hmm, I didn't catch that. Try guessing the word, or say hint, repeat, or skip.",
       "waitForGuess"
@@ -617,14 +639,13 @@ const dmMachine = setup({
   },
 });
 
+
 /* ---------------- Actor ---------------- */
 
-// Create and start the dialogue machine actor, wired up to the visual inspector
 const dmActor = createActor(dmMachine, {
   inspect: inspector.inspect,
 }).start();
 
-// Log every state transition to the browser console for debugging
 dmActor.subscribe((state) => {
   console.group("State update");
   console.log("State value:", state.value);
@@ -632,38 +653,39 @@ dmActor.subscribe((state) => {
   console.groupEnd();
 });
 
+
 /* ---------------- Button + UI updates ---------------- */
-
 export function setupButton(element: HTMLButtonElement) {
-  // Grab all UI elements that need to be updated as the game progresses
+  // Grabbing all UI elements that need to be updated as the game progresses
   const listeningIndicator = document.getElementById("listening-indicator")!;
-  const roundDisplay       = document.getElementById("round-display")!;
-  const scoreDisplay       = document.getElementById("score-display")!;
-  const difficultyDisplay  = document.getElementById("difficulty-display")!;
-  const bestScoreDisplay   = document.getElementById("best-score-display")!;
-  const clueDisplayEl      = document.getElementById("clue-display")!;
-  const clueDotsEl         = document.getElementById("clue-dots")!;
-  const gameStats          = document.getElementById("game-stats")!;
-  const textFallbackEl     = document.getElementById("text-fallback")!;
-  const fallbackInput      = document.getElementById("fallback-input") as HTMLInputElement;
-  const fallbackBtn        = document.getElementById("fallback-btn") as HTMLButtonElement;
+  const roundDisplay = document.getElementById("round-display")!;
+  const scoreDisplay = document.getElementById("score-display")!;
+  const difficultyDisplay = document.getElementById("difficulty-display")!;
+  const bestScoreDisplay = document.getElementById("best-score-display")!;
+  const clueDisplayEl = document.getElementById("clue-display")!;
+  const clueDotsEl = document.getElementById("clue-dots")!;
+  const gameStats = document.getElementById("game-stats")!;
+  const textFallbackEl = document.getElementById("text-fallback")!;
+  const fallbackInput = document.getElementById("fallback-input") as HTMLInputElement;
+  const fallbackBtn = document.getElementById("fallback-btn") as HTMLButtonElement;
 
-  // Forward button clicks to the dialogue machine as a CLICK event
+  //forward button clicks to the dialogue machine as a CLICK event
   element.addEventListener("click", () => dmActor.send({ type: "CLICK" }));
 
   // Text fallback submit — sends the typed text as a TEXT_INPUT event
   function submitFallbackText() {
     const text = fallbackInput.value.trim();
     if (!text) return;
-    dmActor.send({ type: "TEXT_INPUT", value: text });
+    dmActor.send({type: "TEXT_INPUT", value: text});
     fallbackInput.value = "";
   }
+
   fallbackBtn.addEventListener("click", submitFallbackText);
   fallbackInput.addEventListener("keydown", (e) => {
     if (e.key === "Enter") submitFallbackText();
   });
 
-  // Flag to ensure we only subscribe to the SpeechState actor once
+  //flag to ensure we only subscribe to the SpeechState actor once
   let subscribedSpeech = false;
 
   // Re-run every time the DM transitions to a new state
@@ -673,11 +695,11 @@ export function setupButton(element: HTMLButtonElement) {
 
     // Read the speech actor's current state metadata to update the button label
     const speechSnapshot = speechActor.getSnapshot();
-    const meta: { view?: string } = Object.values(speechSnapshot.getMeta())[0] || {};
+    const meta: {view?: string} = Object.values(speechSnapshot.getMeta())[0] || {};
     element.innerHTML = meta.view || "Start Game";
 
     /* --- Update game stats bar --- */
-    const ctx    = snapshot.context;
+    const ctx = snapshot.context;
     const inGame = ctx.difficulty != null; // stats are only meaningful once difficulty is chosen
 
     // Fade the stats bar when no game is active
@@ -687,7 +709,7 @@ export function setupButton(element: HTMLButtonElement) {
     const showFallback = snapshot.matches("waitForGuess") && (ctx.consecutiveFailures ?? 0) >= 3;
     textFallbackEl.classList.toggle("hidden", !showFallback);
 
-    // Round display — cap at maxRounds so it never shows e.g. "6/5" after the last round
+    // Round display — cap at maxRounds so it never shows 
     const maxR = ctx.maxRounds ?? 5;
     roundDisplay.textContent = inGame
       ? `${Math.min((ctx.roundsCompleted ?? 0) + 1, maxR)} / ${maxR}`
@@ -700,19 +722,19 @@ export function setupButton(element: HTMLButtonElement) {
       !inGame ? "neutral" : score > 0 ? "positive" : score < 0 ? "negative" : "neutral"
     );
 
-    // Best score — read from localStorage on every update so it reflects saves from Victory state
+    // Best score 
     const best = localStorage.getItem("mindreader_best");
     bestScoreDisplay.textContent = best ?? "—";
     bestScoreDisplay.className = "stat-value " + (best ? "positive" : "neutral");
 
-    // Difficulty badge — capitalised text with colour from CSS (easy/medium/hard)
+    // Difficulty level
     const diff = ctx.difficulty ?? null;
     difficultyDisplay.textContent = diff
       ? diff.charAt(0).toUpperCase() + diff.slice(1)
       : "—";
     difficultyDisplay.className = "stat-value " + (diff ? `difficulty-${diff}` : "");
 
-    // Clue display — show all revealed clues; previous ones dimmed, current one highlighted
+    // Clue display 
     const clues = ctx.clues ?? [];
     const clueIdx = Math.min(ctx.clueIndex ?? 0, clues.length - 1);
     if (inGame && clues.length > 0) {
